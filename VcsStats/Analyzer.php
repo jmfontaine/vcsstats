@@ -46,18 +46,21 @@ class VcsStats_Analyzer
     /**
      * Computes the number of revisions commited by each user
      *
+     * @param int $startRevision First revision to work on
+     * @param int $endRevision   Last revision to work on
      * @return array Computed data
      */
-    protected function _getRevisionsCountByAuthor()
+    protected function _getRevisionsCountByAuthor($startRevision, $endRevision)
     {
         VcsStats_Runner_Cli::displayMessage(
             'Calculating revisions count by author'
         );
 
-        $sql = 'SELECT author, COUNT(*) AS count
+        $sql = "SELECT author, COUNT(*) AS count
                 FROM revisions
+                WHERE id >= $startRevision AND id <= $endRevision
                 GROUP BY author
-                ORDER BY count DESC';
+                ORDER BY count DESC";
         $data = $this->_cache->fetchAll($sql);
 
         return array(
@@ -81,6 +84,7 @@ class VcsStats_Analyzer
      * Class constructor
      *
      * @param VcsStats_Cache $cache Cache instance
+     * @return void
      */
     public function __construct(VcsStats_Cache $cache)
     {
@@ -91,11 +95,18 @@ class VcsStats_Analyzer
 
     /**
      * Generates and returns data regarding the repository
+     *
+     * @param int $startRevision First revision to work on
+     * @param int $endRevision   Last revision to work on
+     * @return array Analyzed data
      */
-    public function getAnalyzedData()
+    public function getAnalyzedData($startRevision, $endRevision)
     {
         $data   = array();
-        $data[] = $this->_getRevisionsCountByAuthor();
+        $data[] = $this->_getRevisionsCountByAuthor(
+            $startRevision,
+            $endRevision
+        );
         return $data;
     }
 }

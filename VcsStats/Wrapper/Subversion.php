@@ -59,7 +59,7 @@ class VcsStats_Wrapper_Subversion extends VcsStats_Wrapper_Abstract
      * @param string $endRevisionId     Id of the last revision to retrieve
      * @return array
      */
-    public function getRevisionsData($startRevisionId = '1',
+    public function getRevisionsData($startRevisionId = 1,
                                      $endRevisionId = 'HEAD')
     {
         $options = sprintf(

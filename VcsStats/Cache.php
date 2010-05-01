@@ -239,14 +239,26 @@ class VcsStats_Cache
     /**
      * Updates the cache data
      *
+     * @param int|null $endRevisionId Id of the last revision to retrieve
      * @return void
      */
-    public function updateData()
+    public function updateData($endRevisionId = null)
     {
         VcsStats_Runner_Cli::displayMessage('Updating cache data');
 
-        $startRevisionId = $this->getLastCachedRevisionId();
-        $data = $this->_wrapper->getRevisionsData($startRevisionId);
+        $lastCachedRevisionId = $this->getLastCachedRevisionId();
+        if ($lastCachedRevisionId >= $endRevisionId) {
+            VcsStats_Runner_Cli::displayDebug('Everything is already in cache');
+            return;
+        }
+
+        if (null === $endRevisionId) {
+            $endRevisionId = 'HEAD';
+        }
+        $data = $this->_wrapper->getRevisionsData(
+            $lastCachedRevisionId,
+            $endRevisionId
+        );
         $this->_populate($data);
     }
 }

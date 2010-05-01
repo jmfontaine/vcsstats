@@ -50,6 +50,6 @@ interface VcsStats_Wrapper_Interface
      * @param string $endRevisionId     Id of the last revision to retrieve
      * @return array
      */
-    public function getRevisionsData($startRevisionId = '1',
+    public function getRevisionsData($startRevisionId = 1,
                                      $endRevisionId = 'HEAD');
 }

@@ -58,6 +58,23 @@ class VcsStats_Runner_Cli extends VcsStats_Runner_Abstract
      */
     public static $consoleOutput;
 
+    protected static function _extractRevisionsRange($value)
+    {
+        if (false === strpos($value, ':')) {
+            $start = null;
+            $end   = null;
+        } else {
+            $range = explode(':', $value);
+            $start = $range[0];
+            $end   = $range[1];
+        }
+
+        return array(
+            'start' => $start,
+            'end'   => $end,
+        );
+    }
+
     /**
      * Main function. Sets up the environment and coordinate the work.
      *
@@ -94,6 +111,12 @@ class VcsStats_Runner_Cli extends VcsStats_Runner_Abstract
         $helpOption->shorthelp = 'Display help';
         $helpOption->longhelp  = 'Display this help message';
         $input->registerOption($helpOption);
+
+        $revisionsOption = new ezcConsoleOption('r', 'revisions');
+        $revisionsOption->type      = ezcConsoleInput::TYPE_STRING;
+        $revisionsOption->shorthelp = 'Revisions range';
+        $revisionsOption->longhelp  = 'Revisions range to work on';
+        $input->registerOption($revisionsOption);
 
         $verboseOption = new ezcConsoleOption('v', 'verbose');
         $verboseOption->type      = ezcConsoleInput::TYPE_NONE;
@@ -139,10 +162,17 @@ class VcsStats_Runner_Cli extends VcsStats_Runner_Abstract
 
             $cachePath = realpath(dirname(__FILE__) . '/../../tmp');
             $cache     = new VcsStats_Cache($wrapper, $cachePath);
-            $cache->updateData();
+
+            $revisionsRange = self::_extractRevisionsRange(
+                $input->getOption('revisions')->value
+            );
+            $cache->updateData($revisionsRange['end']);
 
             $analyzer      = new VcsStats_Analyzer($cache);
-            $analyzedData  = $analyzer->getAnalyzedData();
+            $analyzedData  = $analyzer->getAnalyzedData(
+                $revisionsRange['start'],
+                $revisionsRange['end']
+            );
 
             $reporter = new VcsStats_Reporter_Text();
             $reporter->displayData($analyzedData);
