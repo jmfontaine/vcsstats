@@ -30,6 +30,7 @@
  * @copyright 2010 Jean-Marc Fontaine <jm@jmfontaine.net>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
+
 class VcsStats_Runner_Cli
 {
     public static $consoleInput;
@@ -37,29 +38,17 @@ class VcsStats_Runner_Cli
 
     final private function __clone()
     {
-
     }
 
     final private function __construct()
     {
-
-    }
-
-    public static function autoload($class)
-    {
-        $path = str_replace('_', '/', $class) . '.php';
-        if (file_exists($path)) {
-            require_once $path;
-            return true;
-        } else {
-            return false;
-        }
     }
 
     public static function run()
     {
         // Set autoload up
-        spl_autoload_register(array(__CLASS__, 'autoload'));
+        require_once 'VcsStats/Loader.php';
+        spl_autoload_register(array('VcsStats_Loader', 'autoload'));
         require_once 'ezc/Base/base.php';
         spl_autoload_register(array('ezcBase', 'autoload'));
 
