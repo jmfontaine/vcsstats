@@ -101,33 +101,23 @@ class VcsStats_Runner_Cli extends VcsStats_Runner_Abstract
         self::$consoleInput = $input;
 
         $debugOption = new ezcConsoleOption('d', 'debug');
-        $debugOption->type      = ezcConsoleInput::TYPE_NONE;
-        $debugOption->shorthelp = 'Display debugging informations';
-        $debugOption->longhelp  = 'Display debugging informations';
+        $debugOption->type = ezcConsoleInput::TYPE_NONE;
         $input->registerOption($debugOption);
 
         $helpOption = new ezcConsoleOption('h', 'help');
-        $helpOption->type      = ezcConsoleInput::TYPE_NONE;
-        $helpOption->shorthelp = 'Display help';
-        $helpOption->longhelp  = 'Display this help message';
+        $helpOption->type = ezcConsoleInput::TYPE_NONE;
         $input->registerOption($helpOption);
 
         $revisionsOption = new ezcConsoleOption('r', 'revisions');
-        $revisionsOption->type      = ezcConsoleInput::TYPE_STRING;
-        $revisionsOption->shorthelp = 'Revisions range';
-        $revisionsOption->longhelp  = 'Revisions range to work on';
+        $revisionsOption->type = ezcConsoleInput::TYPE_STRING;
         $input->registerOption($revisionsOption);
 
         $verboseOption = new ezcConsoleOption('v', 'verbose');
-        $verboseOption->type      = ezcConsoleInput::TYPE_NONE;
-        $verboseOption->shorthelp = 'Display processing informations';
-        $verboseOption->longhelp  = 'Display processing informations';
+        $verboseOption->type = ezcConsoleInput::TYPE_NONE;
         $input->registerOption($verboseOption);
 
         $versionOption = new ezcConsoleOption(null, 'version');
-        $versionOption->type      = ezcConsoleInput::TYPE_NONE;
-        $versionOption->shorthelp = 'Display version';
-        $versionOption->longhelp  = 'Display version';
+        $versionOption->type = ezcConsoleInput::TYPE_NONE;
         $input->registerOption($versionOption);
 
         // Process console input
@@ -212,8 +202,20 @@ class VcsStats_Runner_Cli extends VcsStats_Runner_Abstract
     public static function displayHelp()
     {
         self::displayVersion();
-        echo "\n";
-        echo "Help message...\n\n";
+
+        echo <<<EOT
+
+Usage:
+  vcsstats [options] <path>
+
+Options:
+  -d                --debug                    Display debug informations
+  -h                --help                     Display this message
+  -r <start>:<end>  --revisions <start>:<end>  Limit calculations to the specified range
+  -v                --verbose                  Display processing informations
+                    --version                  Display the version informations
+EOT;
+        echo "\n\n";
     }
 
     /**
