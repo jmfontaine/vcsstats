@@ -30,8 +30,18 @@
  * @copyright 2010 Jean-Marc Fontaine <jm@jmfontaine.net>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
+
+/**
+ * Text renderer
+ */
 class VcsStats_Reporter_Text extends VcsStats_Reporter_Abstract
 {
+    /**
+     * Formats and returns data
+     *
+     * @param array $data
+     * @return array
+     */
     public function formatData(array $data)
     {
         VcsStats_Runner_Cli::displayMessage(

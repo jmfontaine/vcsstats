@@ -51,7 +51,7 @@ class VcsStats_Runner_Cli extends VcsStats_Runner_Abstract
     public static $consoleInput;
 
     /**
-     * object used for display in command line
+     * Object used for display in command line
      *
      * @var ezcConsoleOutput
      * @see http://ezcomponents.org/docs/api/trunk/ConsoleTools/ezcConsoleOutput.html
@@ -60,6 +60,8 @@ class VcsStats_Runner_Cli extends VcsStats_Runner_Abstract
 
     /**
      * Main function. Sets up the environment and coordinate the work.
+     *
+     * @return void
      */
     public static function run()
     {
@@ -136,14 +138,14 @@ class VcsStats_Runner_Cli extends VcsStats_Runner_Abstract
             $wrapper = new VcsStats_Wrapper_Subversion($options);
 
             $cachePath = realpath(dirname(__FILE__) . '/../../tmp');
-            $cache = new VcsStats_Cache($wrapper, $cachePath);
+            $cache     = new VcsStats_Cache($wrapper, $cachePath);
             $cache->updateData();
 
-            $analyzer = new VcsStats_Analyzer($cache);
-            $results  = $analyzer->analyze();
+            $analyzer      = new VcsStats_Analyzer($cache);
+            $analyzedData  = $analyzer->getAnalyzedData();
 
             $reporter = new VcsStats_Reporter_Text();
-            $reporter->displayData($results);
+            $reporter->displayData($analyzedData);
         } catch (Exception $exception) {
             self::displayError($exception->getMessage());
             exit(1);
@@ -151,9 +153,10 @@ class VcsStats_Runner_Cli extends VcsStats_Runner_Abstract
     }
 
     /**
-     * Display debug informations
+     * Displays debug informations
      *
      * @var string $message Message to display
+     * @return void
      */
     public static function displayDebug($message)
     {
@@ -161,9 +164,10 @@ class VcsStats_Runner_Cli extends VcsStats_Runner_Abstract
     }
 
     /**
-     * Display errors
+     * Displays errors
      *
      * @var string $message Message to display
+     * @return void
      */
     public static function displayError($message)
     {
@@ -171,7 +175,9 @@ class VcsStats_Runner_Cli extends VcsStats_Runner_Abstract
     }
 
     /**
-     * Display help informations
+     * Displays help informations
+     *
+     * @return void
      */
     public static function displayHelp()
     {
@@ -181,10 +187,11 @@ class VcsStats_Runner_Cli extends VcsStats_Runner_Abstract
     }
 
     /**
-     * Display messages
+     * Displays messages
      *
      * @var string $message Message to display
      * @var string $type    Type of the message
+     * @return void
      */
     public static function displayMessage($message, $type = 'info')
     {
@@ -200,7 +207,9 @@ class VcsStats_Runner_Cli extends VcsStats_Runner_Abstract
     }
 
     /**
-     * Display version informations
+     * Displays version informations
+     *
+     * @return void
      */
     public static function displayVersion()
     {

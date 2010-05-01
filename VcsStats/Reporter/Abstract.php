@@ -30,8 +30,18 @@
  * @copyright 2010 Jean-Marc Fontaine <jm@jmfontaine.net>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
+
+/**
+ * Base class for reporters
+ */
 abstract class VcsStats_Reporter_Abstract implements VcsStats_Reporter_Interface
 {
+    /**
+     * Displays data
+     *
+     * @param array $data Data to display
+     * @return void
+     */
     public function displayData(array $data)
     {
         echo $this->formatData($data);

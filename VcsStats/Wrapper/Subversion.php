@@ -30,8 +30,18 @@
  * @copyright 2010 Jean-Marc Fontaine <jm@jmfontaine.net>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
+
+/**
+ * Wrapper for Subversion
+ */
 class VcsStats_Wrapper_Subversion extends VcsStats_Wrapper_Abstract
 {
+    /**
+     * Executes svn command and returns output as a SimpleXMLElement object
+     *
+     * @param string $options Options to provide to svn command
+     * @return SimpleXMLElement
+     */
     protected function _execute($options)
     {
         $command = 'svn ' . $options . ' --non-interactive --xml';
@@ -42,13 +52,20 @@ class VcsStats_Wrapper_Subversion extends VcsStats_Wrapper_Abstract
         return new SimpleXMLElement($output);
     }
 
-    public function getRevisionsData($startRevision = '1',
-                                     $endRevision = 'HEAD')
+    /**
+     * Returns data for revisions in the specified range
+     *
+     * @param string $startRevisionId   Id of the first revision to retrieve
+     * @param string $endRevisionId     Id of the last revision to retrieve
+     * @return array
+     */
+    public function getRevisionsData($startRevisionId = '1',
+                                     $endRevisionId = 'HEAD')
     {
         $options = sprintf(
             'log -v -q -r %s:%s %s',
-            $startRevision,
-            $endRevision,
+            $startRevisionId,
+            $endRevisionId,
             $this->_options['path']
         );
         $log       = $this->_execute($options);

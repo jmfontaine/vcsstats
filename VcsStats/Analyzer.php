@@ -30,10 +30,24 @@
  * @copyright 2010 Jean-Marc Fontaine <jm@jmfontaine.net>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
+
+/**
+ * Analyzer for repository data
+ */
 class VcsStats_Analyzer
 {
+    /**
+     * Cache instance
+     *
+     * @var VcsStats_Cache
+     */
     protected $_cache;
 
+    /**
+     * Computes the number of revisions commited by each user
+     *
+     * @return array Computed data
+     */
     protected function _getRevisionsCountByAuthor()
     {
         VcsStats_Runner_Cli::displayMessage(
@@ -44,7 +58,7 @@ class VcsStats_Analyzer
                 FROM revisions
                 GROUP BY author
                 ORDER BY count DESC';
-        $data = $this->_cache->query($sql);
+        $data = $this->_cache->fetchAll($sql);
 
         return array(
             'code'    => 'revisions_count_by_author',
@@ -63,13 +77,22 @@ class VcsStats_Analyzer
         );
     }
 
+    /**
+     * Class constructor
+     *
+     * @param VcsStats_Cache $cache Cache instance
+     */
     public function __construct(VcsStats_Cache $cache)
     {
         VcsStats_Runner_Cli::displayMessage('Initializing analyzer');
+
         $this->_cache = $cache;
     }
 
-    public function analyze()
+    /**
+     * Generates and returns data regarding the repository
+     */
+    public function getAnalyzedData()
     {
         $data   = array();
         $data[] = $this->_getRevisionsCountByAuthor();

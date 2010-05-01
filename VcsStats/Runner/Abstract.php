@@ -44,6 +44,8 @@ abstract class VcsStats_Runner_Abstract implements VcsStats_Runner_Interface
 {
     /**
      * Made private to inforce use of static run() method by disallowing cloning
+     *
+     * @return void
      */
     private final function __clone()
     {
@@ -52,6 +54,8 @@ abstract class VcsStats_Runner_Abstract implements VcsStats_Runner_Interface
     /**
      * Made private to inforce use of static run() method by disallowing
      * instanciation
+     *
+     * @return void
      */
     private final function __construct()
     {

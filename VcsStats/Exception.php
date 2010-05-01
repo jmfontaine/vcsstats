@@ -30,6 +30,10 @@
  * @copyright 2010 Jean-Marc Fontaine <jm@jmfontaine.net>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
+
+/**
+ * VCS Stats base exception
+ */
 class VcsStats_Exception extends Exception
 {
 }

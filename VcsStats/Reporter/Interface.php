@@ -30,8 +30,25 @@
  * @copyright 2010 Jean-Marc Fontaine <jm@jmfontaine.net>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
+
+/**
+ * Interface for reporters
+ */
 interface VcsStats_Reporter_Interface
 {
+    /**
+     * Displays data
+     *
+     * @param array $data Data to display
+     * @return void
+     */
     public function displayData(array $data);
+
+    /**
+     * Formats and returns data
+     *
+     * @param array $data
+     * @return array
+     */
     public function formatData(array $data);
 }

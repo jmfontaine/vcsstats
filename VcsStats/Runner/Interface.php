@@ -37,7 +37,9 @@
 interface VcsStats_Runner_Interface
 {
     /**
-     * Main function used to launch the runner
+     * Main function. Sets up the environment and coordinate the work.
+     *
+     * @return void
      */
     public static function run();
 }

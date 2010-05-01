@@ -30,16 +30,37 @@
  * @copyright 2010 Jean-Marc Fontaine <jm@jmfontaine.net>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
+
+/**
+ *  Base class for VCS wrappers
+ */
 abstract class VcsStats_Wrapper_Abstract implements VcsStats_Wrapper_Interface
 {
+    /**
+     * Wrapper options
+     *
+     * @var array
+     */
     protected $_options;
 
+    /**
+     * Class constructor
+     *
+     * @param array $options Options
+     * @return void
+     */
     public function __construct(array $options)
     {
         VcsStats_Runner_Cli::displayMessage('Initializing wrapper');
         $this->_options = $options;
     }
 
+    /**
+     * Returns repository path
+     *
+     * @throws VcsStats_Wrapper_Exception
+     * @return string Repository path
+     */
     public function getRepositoryPath()
     {
         if (empty($this->_options['path'])) {

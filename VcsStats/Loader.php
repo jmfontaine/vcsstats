@@ -37,9 +37,11 @@
 class VcsStats_Loader
 {
     /**
-     * Class autoloading method to be used with spl_autoload_register() function
+     * Tries to load the file containing the specified class.
+     * This method is to be used with spl_autoload_register() function.
      *
      * @param string $class name of the class to load
+     * @return bool Whether the class was found or not
      */
     public static function autoload($class)
     {

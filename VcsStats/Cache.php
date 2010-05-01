@@ -30,12 +30,38 @@
  * @copyright 2010 Jean-Marc Fontaine <jm@jmfontaine.net>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
+
+/**
+ * Cache management class
+ */
 class VcsStats_Cache
 {
+    /**
+     * Path to the cache directory
+     *
+     * @var string
+     */
     protected $_cachePath;
+
+    /**
+     * Instance of the PDO connection to the database
+     *
+     * @var PDO
+     */
     protected $_pdo;
+
+    /**
+     * Instance of the VCS wrapper to access repository
+     *
+     * @var VcsStats_Wrapper_Interface
+     */
     protected $_wrapper;
 
+    /**
+     * Opens connection to the database
+     *
+     * @return void
+     */
     protected function _connect()
     {
         $filename = hash('sha1', $this->_wrapper->getRepositoryPath());
@@ -45,6 +71,11 @@ class VcsStats_Cache
         $this->_pdo = $pdo;
     }
 
+    /**
+     * Creates database tables
+     *
+     * @return void
+     */
     protected function _initializeDatabase()
     {
         $sql = 'CREATE TABLE IF NOT EXISTS revisions (id INTEGER PRIMARY KEY,
@@ -58,58 +89,13 @@ class VcsStats_Cache
         $this->_pdo->exec($sql);
     }
 
-    public function __construct(VcsStats_Wrapper_Interface $wrapper, $cachePath)
-    {
-        VcsStats_Runner_Cli::displayMessage('Initializing cache');
-
-        $this->_cachePath = $cachePath;
-        $this->_wrapper   = $wrapper;
-
-        $this->_connect();
-        $this->_initializeDatabase();
-    }
-
-    public function fetchAll($sql, $fetchMode = PDO::FETCH_ASSOC, $column = 0)
-    {
-        $statement = $this->_pdo->query($sql);
-
-        if (PDO::FETCH_COLUMN === $fetchMode) {
-            $result = $statement->fetchAll($fetchMode, $column);
-        } else {
-            $result = $statement->fetchAll($fetchMode);
-        }
-
-        return $result;
-    }
-
-    public function fetchColumn($sql, $column = 0)
-    {
-        $statement = $this->_pdo->query($sql);
-        return $statement->fetchColumn($column);
-    }
-
-    public function getLastCachedRevision()
-    {
-        $sql = 'SELECT id
-                FROM revisions
-                ORDER BY id DESC
-                LIMIT 1;';
-        $id = $this->fetchColumn($sql, 0);
-        if (false === $id) {
-            $id = null;
-        }
-        return $id;
-    }
-
-    public function getCachedRevisionsIds()
-    {
-        $sql = 'SELECT id
-                FROM revisions
-                ORDER BY id ASC;';
-        return $this->fetchAll($sql, PDO::FETCH_COLUMN, 0);
-    }
-
-    public function populate(array $data)
+    /**
+     * Populates the cache with revisions data
+     *
+     * @param array $data Data
+     * @return void
+     */
+    private function _populate(array $data)
     {
         $count = count($data);
         if (0 === $count) {
@@ -166,16 +152,101 @@ class VcsStats_Cache
         }
     }
 
+    /**
+     * Class constructor
+     *
+     * @param VcsStats_Wrapper_Interface $wrapper   VCS wrapper
+     * @param string                     $cachePath Path to the cache directory
+     * @return void
+     */
+    public function __construct(VcsStats_Wrapper_Interface $wrapper, $cachePath)
+    {
+        VcsStats_Runner_Cli::displayMessage('Initializing cache');
+
+        $this->_cachePath = $cachePath;
+        $this->_wrapper   = $wrapper;
+
+        $this->_connect();
+        $this->_initializeDatabase();
+    }
+
+    /**
+     * Executes the SQL query and returns all the results
+     *
+     * @param string  $sql       SQL query
+     * @param int     $fetchMode Fetch mode
+     * @param int     $column    Column index, used only when fetch mode is
+     *                           PDO::FETCH_COLUMN
+     * @return array
+     */
+    public function fetchAll($sql, $fetchMode = PDO::FETCH_ASSOC, $column = 0)
+    {
+        $statement = $this->_pdo->query($sql);
+
+        if (PDO::FETCH_COLUMN === $fetchMode) {
+            $result = $statement->fetchAll($fetchMode, $column);
+        } else {
+            $result = $statement->fetchAll($fetchMode);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Executes the SQL query and returns only one column
+     *
+     * @param string $sql    SQL query
+     * @param int    $column Column index
+     * @return array
+     */
+    public function fetchColumn($sql, $column = 0)
+    {
+        $statement = $this->_pdo->query($sql);
+        return $statement->fetchColumn($column);
+    }
+
+    /**
+     * Returns the last cached revision id
+     *
+     * @return int|null
+     */
+    public function getLastCachedRevisionId()
+    {
+        $sql = 'SELECT id
+                FROM revisions
+                ORDER BY id DESC
+                LIMIT 1;';
+        $id = $this->fetchColumn($sql, 0);
+        if (false === $id) {
+            $id = null;
+        }
+        return $id;
+    }
+
+    /**
+     * Returns the cached revisions ids
+     *
+     * @return array
+     */
+    public function getCachedRevisionsIds()
+    {
+        $sql = 'SELECT id
+                FROM revisions
+                ORDER BY id ASC;';
+        return $this->fetchAll($sql, PDO::FETCH_COLUMN, 0);
+    }
+
+    /**
+     * Updates the cache data
+     *
+     * @return void
+     */
     public function updateData()
     {
         VcsStats_Runner_Cli::displayMessage('Updating cache data');
 
-        $startRevision = $this->getLastCachedRevision();
-        if (null === $startRevision) {
-            $startRevision = 1;
-        }
-
-        $data = $this->_wrapper->getRevisionsData($startRevision);
-        $this->populate($data);
+        $startRevisionId = $this->getLastCachedRevisionId();
+        $data = $this->_wrapper->getRevisionsData($startRevisionId);
+        $this->_populate($data);
     }
 }

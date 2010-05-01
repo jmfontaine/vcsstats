@@ -30,9 +30,26 @@
  * @copyright 2010 Jean-Marc Fontaine <jm@jmfontaine.net>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
+
+/**
+ * Iterface for wrappers
+ */
 interface VcsStats_Wrapper_Interface
 {
+    /**
+     * Returns repository path
+     *
+     * @return string Repository path
+     */
     public function getRepositoryPath();
-    public function getRevisionsData($startRevision = '1',
-                                     $endRevision = 'HEAD');
+
+    /**
+     * Returns data for revisions in the specified range
+     *
+     * @param string $startRevisionId   Id of the first revision to retrieve
+     * @param string $endRevisionId     Id of the last revision to retrieve
+     * @return array
+     */
+    public function getRevisionsData($startRevisionId = '1',
+                                     $endRevisionId = 'HEAD');
 }
