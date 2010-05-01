@@ -39,8 +39,8 @@ class VcsStats_Cache
     protected function _connect()
     {
         $filename = hash('sha1', $this->_wrapper->getRepositoryPath());
-        $dsn = "sqlite:$this->_cachePath/$filename";
-        $pdo = new PDO($dsn, '', '');
+        $dsn      = "sqlite:$this->_cachePath/$filename";
+        $pdo      = new PDO($dsn, '', '');
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this->_pdo = $pdo;
     }
@@ -48,12 +48,13 @@ class VcsStats_Cache
     protected function _initializeDatabase()
     {
         $sql = 'CREATE TABLE IF NOT EXISTS revisions (id INTEGER PRIMARY KEY,
-                author TEXT, date INTEGER, message TEXT)';
+                author TEXT, date INTEGER, message TEXT);';
         $this->_pdo->exec($sql);
 
         $sql = 'CREATE TABLE IF NOT EXISTS resources (
                 id INTEGER PRIMARY KEY AUTOINCREMENT, revisionId INTEGER,
-                action TEXT, path TEXT, type TEXT)';
+                action TEXT, path TEXT, type TEXT,
+                FOREIGN KEY(revisionId) REFERENCES revisions(id));';
         $this->_pdo->exec($sql);
     }
 
@@ -68,17 +69,44 @@ class VcsStats_Cache
         $this->_initializeDatabase();
     }
 
+    public function fetchAll($sql, $fetchMode = PDO::FETCH_ASSOC, $column = 0)
+    {
+        $statement = $this->_pdo->query($sql);
+
+        if (PDO::FETCH_COLUMN === $fetchMode) {
+            $result = $statement->fetchAll($fetchMode, $column);
+        } else {
+            $result = $statement->fetchAll($fetchMode);
+        }
+
+        return $result;
+    }
+
+    public function fetchColumn($sql, $column = 0)
+    {
+        $statement = $this->_pdo->query($sql);
+        return $statement->fetchColumn($column);
+    }
+
     public function getLastCachedRevision()
     {
-        $sql = 'SELECT id FROM revisions
+        $sql = 'SELECT id
+                FROM revisions
                 ORDER BY id DESC
                 LIMIT 1;';
-        $statement = $this->_pdo->query($sql);
-        $id = $statement->fetchColumn(0);
+        $id = $this->fetchColumn($sql, 0);
         if (false === $id) {
             $id = null;
         }
         return $id;
+    }
+
+    public function getCachedRevisionsIds()
+    {
+        $sql = 'SELECT id
+                FROM revisions
+                ORDER BY id ASC;';
+        return $this->fetchAll($sql, PDO::FETCH_COLUMN, 0);
     }
 
     public function populate(array $data)
@@ -86,7 +114,7 @@ class VcsStats_Cache
         $count = count($data);
         if (0 === $count) {
             VcsStats_Runner_Cli::displayMessage(
-                "No revision to insert. Skipping cache population"
+                'No revision to insert. Skipping cache population'
             );
             return;
         }
@@ -94,6 +122,8 @@ class VcsStats_Cache
         VcsStats_Runner_Cli::displayMessage(
             "Populating cache data with $count revisions"
         );
+
+        $cachedRevisionsIds = $this->getCachedRevisionsIds();
 
         $sql = 'INSERT INTO revisions (id,author,date,message)
                 VALUES (:id, :author, :date, :message);';
@@ -106,13 +136,23 @@ class VcsStats_Cache
         $resourcesStatement = $this->_pdo->prepare($sql, $options);
 
         foreach($data as $revision) {
+            if (in_array($revision['id'], $cachedRevisionsIds)) {
+                VcsStats_Runner_Cli::displayDebug(
+                    'Skipping already cached revision ' . $revision['id']
+                );
+                continue;
+            }
+
+            VcsStats_Runner_Cli::displayDebug(
+                'Caching revision ' . $revision['id']
+            );
             $params = array(
                 ':id'      => $revision['id'],
                 ':author'  => $revision['author'],
                 ':date'    => $revision['date'],
                 ':message' => $revision['message'],
             );
-            $revisionsStatement->execute($params);
+            $result = $revisionsStatement->execute($params);
 
             foreach($revision['resources'] as $resource) {
                 $params = array(
@@ -126,13 +166,6 @@ class VcsStats_Cache
         }
     }
 
-    public function query($sql)
-    {
-        $statement = $this->_pdo->query($sql);
-        $statement->setFetchMode(PDO::FETCH_ASSOC);
-        return $statement->fetchAll();
-    }
-
     public function updateData()
     {
         VcsStats_Runner_Cli::displayMessage('Updating cache data');
@@ -143,7 +176,6 @@ class VcsStats_Cache
         }
 
         $data = $this->_wrapper->getRevisionsData($startRevision);
-        $data = array_slice($data, 1, null, true);
         $this->populate($data);
     }
 }
