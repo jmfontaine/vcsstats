@@ -32,26 +32,15 @@
  */
 
 /**
- * Iterface for wrappers
+ * nterface for report element
  */
-interface VcsStats_Wrapper_Interface
+interface VcsStats_Report_Element_Interface
 {
-    /**
-     * Returns repository path
-     *
-     * @return string Repository path
-     */
-    public function getRepositoryPath();
+    public function getCode();
 
-    /**
-     * Returns data for revisions in the specified range
-     *
-     * @param string $startRevisionId   Id of the first revision to retrieve
-     * @param string $endRevisionId     Id of the last revision to retrieve
-     * @return array
-     */
-    public function getRevisionsData($startRevisionId = 1,
-                                     $endRevisionId = 'HEAD');
+    public function getTitle();
 
-     public function getVcsName();
+    public function setCode($code);
+
+    public function setTitle($title);
 }

@@ -32,26 +32,59 @@
  */
 
 /**
- * Iterface for wrappers
+ * Report class
  */
-interface VcsStats_Wrapper_Interface
+class VcsStats_Report
 {
-    /**
-     * Returns repository path
-     *
-     * @return string Repository path
-     */
-    public function getRepositoryPath();
+    protected $_date;
+    protected $_repositoryPath;
+    protected $_sections = array();
+    protected $_vcs;
 
-    /**
-     * Returns data for revisions in the specified range
-     *
-     * @param string $startRevisionId   Id of the first revision to retrieve
-     * @param string $endRevisionId     Id of the last revision to retrieve
-     * @return array
-     */
-    public function getRevisionsData($startRevisionId = 1,
-                                     $endRevisionId = 'HEAD');
+    public function __construct($vcs = null, $repositoryPath = null)
+    {
+        $this->_date = time();
 
-     public function getVcsName();
+        if (null !== $repositoryPath) {
+            $this->_repositoryPath = $repositoryPath;
+        }
+        if (null !== $vcs) {
+            $this->_vcs = $vcs;
+        }
+    }
+
+    public function addSection(VcsStats_Report_Section $section)
+    {
+        $this->_sections[] = $section;
+    }
+
+    public function getDate()
+    {
+        return $this->_date;
+    }
+
+    public function getRepositoryPath()
+    {
+        return $this->_repositoryPath;
+    }
+
+    public function getSections()
+    {
+        return $this->_sections;
+    }
+
+    public function getVcs()
+    {
+        return $this->_vcs;
+    }
+
+    public function setRepositoryPath($repositoryPath)
+    {
+        $this->_repositoryPath = (string) $repositoryPath;
+    }
+
+    public function setVcs($vcs)
+    {
+        $this->_vcs = (string) $vcs;
+    }
 }

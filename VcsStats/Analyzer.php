@@ -50,34 +50,42 @@ class VcsStats_Analyzer
      * @param int $endRevision   Last revision to work on
      * @return array Computed data
      */
-    protected function _getRevisionsCountByAuthor($startRevision, $endRevision)
+    protected function _computeRevisionsCountByAuthor($startRevision,
+        $endRevision)
     {
         VcsStats_Runner_Cli::displayMessage(
             'Calculating revisions count by author'
         );
 
+        $table = new VcsStats_Report_Element_Table();
+        $table->setCode('revisions_count_by_author');
+        $table->setTitle('Revisions count by author');
+
+        $table->addColumn(
+            new VcsStats_Report_Element_Table_Column('Author', 'author')
+        );
+        $table->addColumn(
+            new VcsStats_Report_Element_Table_Column(
+                'Count',
+                'count',
+                VcsStats_Report_Element_Table_Column::ALIGNMENT_RIGHT
+            )
+        );
+
+        $where = '';
+        if (null !== $startRevision && null != $endRevision) {
+            $where = "WHERE id >= $startRevision AND id <= $endRevision";
+        }
+
         $sql = "SELECT author, COUNT(*) AS count
                 FROM revisions
-                WHERE id >= $startRevision AND id <= $endRevision
+                $where
                 GROUP BY author
                 ORDER BY count DESC";
         $data = $this->_cache->fetchAll($sql);
+        $table->setRows($data);
 
-        return array(
-            'code'    => 'revisions_count_by_author',
-            'name'    => 'Revisions count by author',
-            'columns' => array(
-                'author' => array(
-                    'alignment' => 'left',
-                    'label'     => 'Author',
-                ),
-                'count' => array(
-                    'alignment' => 'right',
-                    'label'     => 'Count',
-                ),
-            ),
-            'data' => $data,
-        );
+        return $table;
     }
 
     /**
@@ -94,19 +102,26 @@ class VcsStats_Analyzer
     }
 
     /**
-     * Generates and returns data regarding the repository
+     * Generates and returns report
      *
      * @param int $startRevision First revision to work on
      * @param int $endRevision   Last revision to work on
-     * @return array Analyzed data
+     * @return VcsStats_Report Report
      */
-    public function getAnalyzedData($startRevision, $endRevision)
+    public function getReport($startRevision, $endRevision)
     {
-        $data   = array();
-        $data[] = $this->_getRevisionsCountByAuthor(
-            $startRevision,
-            $endRevision
+        $report = new VcsStats_Report();
+
+        $summarySection = new VcsStats_Report_Section();
+        $report->addSection($summarySection);
+
+        $summarySection->addElement(
+            $this->_computeRevisionsCountByAuthor(
+                $startRevision,
+                $endRevision
+            )
         );
-        return $data;
+
+        return $report;
     }
 }

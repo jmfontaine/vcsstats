@@ -32,26 +32,31 @@
  */
 
 /**
- * Iterface for wrappers
+ * Abstract class for report element
  */
-interface VcsStats_Wrapper_Interface
+abstract class VcsStats_Report_Element_Abstract
+    implements VcsStats_Report_Element_Interface
 {
-    /**
-     * Returns repository path
-     *
-     * @return string Repository path
-     */
-    public function getRepositoryPath();
+    protected $_code;
+    protected $_title;
 
-    /**
-     * Returns data for revisions in the specified range
-     *
-     * @param string $startRevisionId   Id of the first revision to retrieve
-     * @param string $endRevisionId     Id of the last revision to retrieve
-     * @return array
-     */
-    public function getRevisionsData($startRevisionId = 1,
-                                     $endRevisionId = 'HEAD');
+    public function getCode()
+    {
+        return $this->_code;
+    }
 
-     public function getVcsName();
+    public function getTitle()
+    {
+        return $this->_title;
+    }
+
+    public function setCode($code)
+    {
+        $this->_code = (string) $code;
+    }
+
+    public function setTitle($title)
+    {
+        $this->_title = (string) $title;
+    }
 }

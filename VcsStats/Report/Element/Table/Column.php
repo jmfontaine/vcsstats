@@ -32,23 +32,53 @@
  */
 
 /**
- * Interface for reporters
+ * Report table column
  */
-interface VcsStats_Reporter_Interface
+class VcsStats_Report_Element_Table_Column
 {
-    /**
-     * Displays data
-     *
-     * @param array $data Data to display
-     * @return void
-     */
-    public function displayData(array $data);
+    const ALIGNMENT_CENTER = 'center';
+    const ALIGNMENT_LEFT   = 'left';
+    const ALIGNMENT_RIGHT  = 'right';
 
-    /**
-     * Formats and returns data
-     *
-     * @param array $data
-     * @return array
-     */
-    public function formatData(array $data);
+    protected $_alignment;
+    protected $_code;
+    protected $_title;
+
+    public function __construct($title, $code,
+        $alignment = self::ALIGNMENT_LEFT)
+    {
+        $this->setAlignment($alignment);
+        $this->setCode($code);
+        $this->setTitle($title);
+    }
+
+    public function getAlignment()
+    {
+        return $this->_alignment;
+    }
+
+    public function getCode()
+    {
+        return $this->_code;
+    }
+
+    public function getTitle()
+    {
+        return $this->_title;
+    }
+
+    public function setAlignment($alignment)
+    {
+        $this->_alignment = (string) $alignment;
+    }
+
+    public function setCode($code)
+    {
+        $this->_code = (string) $code;
+    }
+
+    public function setTitle($title)
+    {
+        $this->_title = (string) $title;
+    }
 }

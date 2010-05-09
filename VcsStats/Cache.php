@@ -78,6 +78,41 @@ class VcsStats_Cache
      */
     protected function _initializeDatabase()
     {
+        $sql = 'CREATE TABLE IF NOT EXISTS informations (
+                id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, value TEXT);';
+        $this->_pdo->exec($sql);
+
+        $sql = "SELECT value FROM informations WHERE name = 'creationDate';";
+        $creationDate = $this->fetchOne($sql);
+
+        if (false !== $creationDate) {
+            $this->_insert(
+                'informations',
+                array('name' => 'creationDate', 'value' => time())
+            );
+            $this->_insert(
+                'informations',
+                array('name' => 'modificationDate', 'value' => time())
+            );
+            $this->_insert(
+                'informations',
+                array('name' => 'vcs', 'value' => $this->_wrapper->getVcsName())
+            );
+            $this->_insert(
+                'informations',
+                array(
+                    'name' => 'repositoryPath',
+                    'value' => $this->_wrapper->getRepositoryPath()
+                )
+            );
+        } else {
+            $this->_update(
+                'informations',
+                array('name' => 'modificationDate', 'value' => time()),
+                "name = 'modificationDate'"
+            );
+        }
+
         $sql = 'CREATE TABLE IF NOT EXISTS revisions (id INTEGER PRIMARY KEY,
                 author TEXT, date INTEGER, message TEXT);';
         $this->_pdo->exec($sql);
@@ -87,6 +122,56 @@ class VcsStats_Cache
                 action TEXT, path TEXT, type TEXT,
                 FOREIGN KEY(revisionId) REFERENCES revisions(id));';
         $this->_pdo->exec($sql);
+    }
+
+    /**
+     * Inserts data into a table
+     *
+     * @param string $table Table name
+     * @param array  $data  Data to insert
+     * @return bool Whether the insertion succeeded or not
+     */
+    protected function _insert($table, array $data)
+    {
+        $columns = array_keys($data);
+        $values  = array_values($data);
+
+        $sql = sprintf(
+            'INSERT INTO %s (%s) VALUES (?%s)',
+            $table,
+            implode(',', $columns),
+            str_repeat(', ?', count($columns) - 1)
+        );
+
+        $statement = $this->_pdo->prepare($sql);
+        return $statement->execute($values);
+    }
+
+    /**
+     * Updates data in a table
+     *
+     * @param string $table Table name
+     * @param array  $data  Data to insert
+     * @param string $where SQL where clause
+     * @return bool Whether the update succeeded or not
+     */
+    protected function _update($table, array $data, $where)
+    {
+        $values       = array_values($data);
+        $assignations = array();
+        foreach ($data as $field => $value) {
+            $assignations[] = $field . ' = ?';
+        }
+
+        $sql = sprintf(
+            'UPDATE %s SET %s WHERE %s',
+            $table,
+            implode(',', $assignations),
+            $where
+        );
+
+        $statement = $this->_pdo->prepare($sql);
+        return $statement->execute($values);
     }
 
     /**
@@ -206,6 +291,19 @@ class VcsStats_Cache
     }
 
     /**
+     * Executes the SQL query and returns only the first value of the first
+     * column
+     *
+     * @param string $sql SQL query
+     * @return mixed
+     */
+    public function fetchOne($sql)
+    {
+        $statement = $this->_pdo->query($sql);
+        return $statement->fetchColumn(0);
+    }
+
+    /**
      * Returns the last cached revision id
      *
      * @return int|null
@@ -246,8 +344,12 @@ class VcsStats_Cache
     {
         VcsStats_Runner_Cli::displayMessage('Updating cache data');
 
-        $lastCachedRevisionId = $this->getLastCachedRevisionId();
-        if ($lastCachedRevisionId >= $endRevisionId) {
+        $startRevisionId = $this->getLastCachedRevisionId();
+        if (null === $startRevisionId) {
+            $startRevisionId = 1;
+        }
+
+        if ($startRevisionId >= $endRevisionId) {
             VcsStats_Runner_Cli::displayDebug('Everything is already in cache');
             return;
         }
@@ -256,7 +358,7 @@ class VcsStats_Cache
             $endRevisionId = 'HEAD';
         }
         $data = $this->_wrapper->getRevisionsData(
-            $lastCachedRevisionId,
+            $startRevisionId,
             $endRevisionId
         );
         $this->_populate($data);

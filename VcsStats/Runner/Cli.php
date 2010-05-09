@@ -158,14 +158,14 @@ class VcsStats_Runner_Cli extends VcsStats_Runner_Abstract
             );
             $cache->updateData($revisionsRange['end']);
 
-            $analyzer      = new VcsStats_Analyzer($cache);
-            $analyzedData  = $analyzer->getAnalyzedData(
+            $analyzer = new VcsStats_Analyzer($cache);
+            $report   = $analyzer->getReport(
                 $revisionsRange['start'],
                 $revisionsRange['end']
             );
 
-            $reporter = new VcsStats_Reporter_Text();
-            $reporter->displayData($analyzedData);
+            $renderer = new VcsStats_Renderer_Text();
+            $renderer->render($report);
         } catch (Exception $exception) {
             self::displayError($exception->getMessage());
             exit(1);

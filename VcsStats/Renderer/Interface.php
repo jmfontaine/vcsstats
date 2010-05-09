@@ -32,26 +32,31 @@
  */
 
 /**
- * Iterface for wrappers
+ * Interface for renderers
  */
-interface VcsStats_Wrapper_Interface
+interface VcsStats_Renderer_Interface
 {
     /**
-     * Returns repository path
+     * Generate report output
      *
-     * @return string Repository path
+     * @param VcsStats_Report $report Report
+     * @return void
      */
-    public function getRepositoryPath();
+    public function render(VcsStats_Report $report);
 
     /**
-     * Returns data for revisions in the specified range
+     * Generate section output
      *
-     * @param string $startRevisionId   Id of the first revision to retrieve
-     * @param string $endRevisionId     Id of the last revision to retrieve
-     * @return array
+     * @param VcsStats_Report $report Report
+     * @return void
      */
-    public function getRevisionsData($startRevisionId = 1,
-                                     $endRevisionId = 'HEAD');
+    public function renderSection(VcsStats_Report_Section $section);
 
-     public function getVcsName();
+    /**
+     * Generate table output
+     *
+     * @param VcsStats_Table $table Table
+     * @return void
+     */
+    public function renderTable(VcsStats_Report_Element_Table $table);
 }

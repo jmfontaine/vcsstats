@@ -91,4 +91,9 @@ class VcsStats_Wrapper_Subversion extends VcsStats_Wrapper_Abstract
         }
         return $revisions;
     }
+
+    public function getVcsName()
+    {
+        return 'Subversion';
+    }
 }

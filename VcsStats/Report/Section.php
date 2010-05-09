@@ -32,18 +32,41 @@
  */
 
 /**
- * Base class for reporters
+ * Report section
  */
-abstract class VcsStats_Reporter_Abstract implements VcsStats_Reporter_Interface
+class VcsStats_Report_Section
 {
-    /**
-     * Displays data
-     *
-     * @param array $data Data to display
-     * @return void
-     */
-    public function displayData(array $data)
+    protected $_code;
+    protected $_element = array();
+    protected $_title;
+
+    public function addElement(VcsStats_Report_Element_Interface $element)
     {
-        echo $this->formatData($data);
+        $this->_elements[] = $element;
+    }
+
+    public function getCode()
+    {
+        return $this->_code;
+    }
+
+    public function getElements()
+    {
+        return $this->_elements;
+    }
+
+    public function getTitle()
+    {
+        return $this->_title;
+    }
+
+    public function setCode($code)
+    {
+        $this->_code = (string) $code;
+    }
+
+    public function setTitle($title)
+    {
+        $this->_title = (string) $title;
     }
 }
