@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * @package vcsstats
+ * @package VcsStats
  * @author Jean-Marc Fontaine <jm@jmfontaine.net>
  * @copyright 2010 Jean-Marc Fontaine <jm@jmfontaine.net>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
@@ -36,55 +36,122 @@
  */
 class VcsStats_Report
 {
+    /**
+     * Unix timestamp of the report creation
+     * @var int
+     */
     protected $_date;
-    protected $_repositoryPath;
-    protected $_sections = array();
-    protected $_vcs;
 
+    /**
+     * Path to the repository
+     * @var string
+     */
+    protected $_repositoryPath = '';
+
+    /**
+     * Report sections
+     * @var array
+     */
+    protected $_sections = array();
+
+    /**
+     * Name of the VCS
+     * @var string
+     */
+    protected $_vcs = '';
+
+    /**
+     * Constructor
+     *
+     * @param string $vcs            Name of the VCS
+     * @param string $repositoryPath Path to the repository
+     * @return void
+     */
     public function __construct($vcs = null, $repositoryPath = null)
     {
         $this->_date = time();
 
         if (null !== $repositoryPath) {
-            $this->_repositoryPath = $repositoryPath;
+            $this->setRepositoryPath($repositoryPath);
         }
         if (null !== $vcs) {
-            $this->_vcs = $vcs;
+            $this->setVcs($vcs);
         }
     }
 
+    /**
+     * Adds a section to the report
+     *
+     * @param VcsStats_Report_Section $section Section to be added
+     * @return The current instance of the report
+     */
     public function addSection(VcsStats_Report_Section $section)
     {
         $this->_sections[] = $section;
+        return $this;
     }
 
+    /**
+     * Returns the Unix timestamp of the creation of the report
+     *
+     * @return int
+     */
     public function getDate()
     {
         return $this->_date;
     }
 
+    /**
+     * Returns the path to the repository
+     *
+     * @return string
+     */
     public function getRepositoryPath()
     {
         return $this->_repositoryPath;
     }
 
+    /**
+     * Returns the report sections
+     *
+     * @return array
+     */
     public function getSections()
     {
         return $this->_sections;
     }
 
+    /**
+     * Returns VCS name
+     *
+     * @return string
+     */
     public function getVcs()
     {
         return $this->_vcs;
     }
 
+    /**
+     * Defines the path to the repository
+     *
+     * @param string $repositoryPath Path to the repository
+     * @returns The current instance of the report
+     */
     public function setRepositoryPath($repositoryPath)
     {
         $this->_repositoryPath = (string) $repositoryPath;
+        return $this;
     }
 
+    /**
+     * Returns the name of the VCS
+     *
+     * @param string $vcs
+     * @returns The current instance of the report
+     */
     public function setVcs($vcs)
     {
         $this->_vcs = (string) $vcs;
+        return $this;
     }
 }

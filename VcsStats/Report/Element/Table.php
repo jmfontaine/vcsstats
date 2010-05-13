@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * @package vcsstats
+ * @package VcsStats
  * @author Jean-Marc Fontaine <jm@jmfontaine.net>
  * @copyright 2010 Jean-Marc Fontaine <jm@jmfontaine.net>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
@@ -36,19 +36,50 @@
  */
 class VcsStats_Report_Element_Table extends VcsStats_Report_Element_Abstract
 {
+    /**
+     * Table columns
+     *
+     * @var array
+     */
     protected $_columns = array();
-    protected $_rows    = array();
 
+    /**
+     * Table rows
+     *
+     * @var $_rows unknown_type
+     */
+    protected $_rows = array();
+
+    /**
+     * Adds a column to the table
+     *
+     * @param VcsStats_Report_Element_Table_Column $column Column to be added
+     * @return The current instance of the report
+     */
     public function addColumn(VcsStats_Report_Element_Table_Column $column)
     {
         $this->_columns[] = $column;
+        return $this;
     }
 
+    /**
+     * Adds a row to the table
+     *
+     * @param array $row Row to be added
+     * @return The current instance of the report
+     */
     public function addRow(array $row)
     {
         $this->_rows[] = $row;
+        return $this;
     }
 
+    /**
+     * Retrieve a column by its code
+     *
+     * @param string $code Column code
+     * @throws OutOfBoundsException When column can not be found
+     */
     public function getColumn($code)
     {
         foreach ($this->_columns as $column) {
@@ -56,27 +87,51 @@ class VcsStats_Report_Element_Table extends VcsStats_Report_Element_Abstract
                 return $column;
             }
         }
-        return false;
+
+        throw new OutOfBoundsException("Unknow column ($code)");
     }
 
-
+    /**
+     * Returns the informations about the columns of the table
+     *
+     * @return array
+     */
     public function getColumns()
     {
         return $this->_columns;
     }
 
+    /**
+     * Returns the rows of the table
+     *
+     * @return array
+     */
     public function getRows()
     {
         return $this->_rows;
     }
 
+    /**
+     * Defines all the columns at the same time. Existing columns are replaced.
+     *
+     * @param array $columns Columns to be defined
+     * @return The current instance of the report
+     */
     public function setColumns(array $columns)
     {
         $this->_columns = $columns;
+        return $this;
     }
 
+    /**
+     * Defines all the rows at the same time. Existing rows are replaced.
+     *
+     * @param array $rows Rows to be defined
+     * @return The current instance of the report
+     */
     public function setRows(array $rows)
     {
         $this->_rows = $rows;
+        return $this;
     }
 }

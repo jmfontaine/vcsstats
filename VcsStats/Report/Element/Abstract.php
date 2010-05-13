@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * @package vcsstats
+ * @package VcsStats
  * @author Jean-Marc Fontaine <jm@jmfontaine.net>
  * @copyright 2010 Jean-Marc Fontaine <jm@jmfontaine.net>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
@@ -37,24 +37,57 @@
 abstract class VcsStats_Report_Element_Abstract
     implements VcsStats_Report_Element_Interface
 {
+    /**
+     * Element code
+     *
+     * @var string
+     */
     protected $_code;
+
+    /**
+     * Element title
+     *
+     * @var string
+     */
     protected $_title;
 
+    /**
+     * Returns element code
+     *
+     * @return string
+     */
     public function getCode()
     {
         return $this->_code;
     }
 
+    /**
+     * Returns element title
+     *
+     * @return string
+     */
     public function getTitle()
     {
         return $this->_title;
     }
 
+    /**
+     * Defines element code
+     *
+     * @param string $code
+     * @return The current instance of the report
+     */
     public function setCode($code)
     {
         $this->_code = (string) $code;
     }
 
+    /**
+     * Defines element title
+     *
+     * @param string $title
+     * @return The current instance of the report
+     */
     public function setTitle($title)
     {
         $this->_title = (string) $title;

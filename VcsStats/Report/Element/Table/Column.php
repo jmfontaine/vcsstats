@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * @package vcsstats
+ * @package VcsStats
  * @author Jean-Marc Fontaine <jm@jmfontaine.net>
  * @copyright 2010 Jean-Marc Fontaine <jm@jmfontaine.net>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
@@ -36,14 +36,41 @@
  */
 class VcsStats_Report_Element_Table_Column
 {
+    /**
+     *  Aligment types
+     */
     const ALIGNMENT_CENTER = 'center';
     const ALIGNMENT_LEFT   = 'left';
     const ALIGNMENT_RIGHT  = 'right';
 
+    /**
+     * Column alignment
+     *
+     * @var string
+     */
     protected $_alignment;
+
+    /**
+     * Column code
+     *
+     * @var string
+     */
     protected $_code;
+
+    /**
+     * Column title
+     *
+     * @var string
+     */
     protected $_title;
 
+    /**
+     * Constructor
+     *
+     * @param string $title     Column title
+     * @param string $code      Column code
+     * @param string $alignment Column alignment
+     */
     public function __construct($title, $code,
         $alignment = self::ALIGNMENT_LEFT)
     {
@@ -52,33 +79,69 @@ class VcsStats_Report_Element_Table_Column
         $this->setTitle($title);
     }
 
+    /**
+     * Returns column alignment
+     *
+     * @return string
+     */
     public function getAlignment()
     {
         return $this->_alignment;
     }
 
+    /**
+     * Returns column code
+     *
+     * @return string
+     */
     public function getCode()
     {
         return $this->_code;
     }
 
-    public function getTitle()
+    /**
+     * Returns column title
+     *
+     * @return string
+     */
+        public function getTitle()
     {
         return $this->_title;
     }
 
+    /**
+     * Defines column alignment
+     *
+     * @param string $alignment
+     * @return The current instance of the report
+     */
     public function setAlignment($alignment)
     {
         $this->_alignment = (string) $alignment;
+        return $this;
     }
 
+    /**
+     * Defines column code
+     *
+     * @param string $code
+     * @return The current instance of the report
+     */
     public function setCode($code)
     {
         $this->_code = (string) $code;
+        return $this;
     }
 
+    /**
+     * Defines column title
+     *
+     * @param string $title
+     * @return The current instance of the report
+     */
     public function setTitle($title)
     {
         $this->_title = (string) $title;
+        return $this;
     }
 }

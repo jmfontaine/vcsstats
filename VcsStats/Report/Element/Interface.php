@@ -25,22 +25,44 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * @package vcsstats
+ * @package VcsStats
  * @author Jean-Marc Fontaine <jm@jmfontaine.net>
  * @copyright 2010 Jean-Marc Fontaine <jm@jmfontaine.net>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 
 /**
- * nterface for report element
+ * Interface for report element
  */
 interface VcsStats_Report_Element_Interface
 {
+    /**
+     * Returns element code
+     *
+     * @return string
+     */
     public function getCode();
 
+    /**
+     * Returns element title
+     *
+     * @return string
+     */
     public function getTitle();
 
+    /**
+     * Defines element code
+     *
+     * @param string $code
+     * @return The current instance of the report
+     */
     public function setCode($code);
 
+    /**
+     * Defines element title
+     *
+     * @param string $title
+     * @return The current instance of the report
+     */
     public function setTitle($title);
 }

@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * @package vcsstats
+ * @package VcsStats
  * @author Jean-Marc Fontaine <jm@jmfontaine.net>
  * @copyright 2010 Jean-Marc Fontaine <jm@jmfontaine.net>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
@@ -36,37 +36,90 @@
  */
 class VcsStats_Report_Section
 {
-    protected $_code;
-    protected $_element = array();
-    protected $_title;
+    /**
+     * Section identifying code
+     *
+     * @var string
+     */
+    protected $_code = '';
 
+    /**
+     * Section elements
+     *
+     * @var array
+     */
+    protected $_elements = array();
+
+    /**
+     * Section title
+     *
+     * @var string
+     */
+    protected $_title = '';
+
+    /**
+     * Adds an elements to the section
+     *
+     * @param VcsStats_Report_Element_Interface $element Element to be added
+     * @return The current instance of the report
+     */
     public function addElement(VcsStats_Report_Element_Interface $element)
     {
         $this->_elements[] = $element;
+        return $this;
     }
 
+    /**
+     * Returns code of the section
+     *
+     * @return string
+     */
     public function getCode()
     {
         return $this->_code;
     }
 
+    /**
+     * Returns the elements of the section
+     *
+     * @return array
+     */
     public function getElements()
     {
         return $this->_elements;
     }
 
+    /**
+     * Returns the title of the section
+     *
+     * @return array
+     */
     public function getTitle()
     {
         return $this->_title;
     }
 
+    /**
+     * Defines the identifying code of the section
+     *
+     * @param string $code Section code
+     * @return The current instance of the report
+     */
     public function setCode($code)
     {
         $this->_code = (string) $code;
+        return $this;
     }
 
+    /**
+     * Defines the title of the section
+     *
+     * @param string $title Section title
+     * @return The current instance of the report
+     */
     public function setTitle($title)
     {
         $this->_title = (string) $title;
+        return $this;
     }
 }
