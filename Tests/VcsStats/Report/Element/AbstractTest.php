@@ -26,70 +26,58 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @package VcsStats
+ * @subpackage Tests
  * @author Jean-Marc Fontaine <jm@jmfontaine.net>
  * @copyright 2010 Jean-Marc Fontaine <jm@jmfontaine.net>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 
-/**
- * Abstract class for report element
- */
-abstract class VcsStats_Report_Element_Abstract
-    implements VcsStats_Report_Element_Interface
+class ElementTest extends VcsStats_Report_Element_Abstract
 {
-    /**
-     * Element code
-     *
-     * @var string
-     */
-    protected $_code = '';
+}
 
-    /**
-     * Element title
-     *
-     * @var string
-     */
-    protected $_title = '';
-
-    /**
-     * Returns element code
-     *
-     * @return string
-     */
-    public function getCode()
+class VcsStats_Report_Element_AbstractTest extends PHPUnit_Framework_TestCase
+{
+    /* Tests */
+    public function testGetCode()
     {
-        return $this->_code;
+        $element = new ElementTest();
+        $this->assertSame('', $element->getCode());
+
+        $element->setCode('dummy');
+        $this->assertSame('dummy', $element->getCode());
     }
 
-    /**
-     * Returns element title
-     *
-     * @return string
-     */
-    public function getTitle()
+    public function testGetTitle()
     {
-        return $this->_title;
+        $element = new ElementTest();
+        $this->assertSame('', $element->getTitle());
+
+        $element->setTitle('Dummy');
+        $this->assertSame('Dummy', $element->getTitle());
     }
 
-    /**
-     * Defines element code
-     *
-     * @param string $code
-     * @return The current instance of the report
-     */
-    public function setCode($code)
+    public function testSetCode()
     {
-        $this->_code = (string) $code;
+        $element = new ElementTest();
+
+        $element->setCode('dummy');
+        $this->assertSame('dummy', $element->getCode());
+
+        $element->setCode(123456);
+        $this->assertSame('123456', $element->getCode());
     }
 
-    /**
-     * Defines element title
-     *
-     * @param string $title
-     * @return The current instance of the report
-     */
-    public function setTitle($title)
+    public function testSetTitle()
     {
-        $this->_title = (string) $title;
+        $element = new ElementTest();
+
+        $element->setTitle('Dummy');
+        $this->assertSame('Dummy', $element->getTitle());
+
+        $element->setTitle(123456);
+        $this->assertSame('123456', $element->getTitle());
     }
+
+    /* Bugs */
 }

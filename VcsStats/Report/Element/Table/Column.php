@@ -104,7 +104,7 @@ class VcsStats_Report_Element_Table_Column
      *
      * @return string
      */
-        public function getTitle()
+    public function getTitle()
     {
         return $this->_title;
     }

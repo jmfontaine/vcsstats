@@ -4,4 +4,5 @@
 .settings
 
 # Project files and directories
+phpunit.xml
 tmp/*
